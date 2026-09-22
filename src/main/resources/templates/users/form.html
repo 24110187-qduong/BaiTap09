@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title th:text="${userDTO.id != null ? 'Sửa User' : 'Thêm User'}">User</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <h1 th:text="${userDTO.id != null ? 'Sửa User' : 'Thêm User'}"></h1>
+
+    <form th:action="${userDTO.id != null} ? @{/users/edit/{id}(id=${userDTO.id})} : @{/users/create}"
+          th:object="${userDTO}" method="post" class="form">
+
+        <label>Username</label>
+        <input type="text" th:field="*{username}" required>
+        <span class="field-error" th:if="${#fields.hasErrors('username')}"
+              th:errors="*{username}"></span>
+
+        <label>Email</label>
+        <input type="email" th:field="*{email}" required>
+        <span class="field-error" th:if="${#fields.hasErrors('email')}"
+              th:errors="*{email}"></span>
+
+        <label>Họ tên</label>
+        <input type="text" th:field="*{fullName}" required>
+        <span class="field-error" th:if="${#fields.hasErrors('fullName')}"
+              th:errors="*{fullName}"></span>
+
+        <label>Mật khẩu <small th:if="${userDTO.id != null}">(để trống nếu không đổi)</small></label>
+        <input type="password" th:field="*{password}">
+        <span class="field-error" th:if="${#fields.hasErrors('password')}"
+              th:errors="*{password}"></span>
+
+        <label>Role</label>
+        <select th:field="*{roleId}" required>
+            <option value="">-- Chọn role --</option>
+            <option th:each="r : ${roles}"
+                    th:value="${r.id}"
+                    th:text="${r.name}"></option>
+        </select>
+
+        <label>
+            <input type="checkbox" th:field="*{enabled}"> Kích hoạt
+        </label>
+
+        <button class="btn primary" type="submit">Lưu</button>
+        <a th:href="@{/users}" class="btn secondary">Hủy</a>
+    </form>
+</main>
+
+</body>
+</html>

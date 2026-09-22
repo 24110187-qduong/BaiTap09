@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Sản phẩm</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="page-title">
+        <h1>Sản phẩm</h1>
+        <a th:href="@{/products/create}" class="btn primary">+ Thêm sản phẩm</a>
+    </div>
+
+    <div class="alert success" th:if="${message}" th:text="${message}"></div>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+
+    <form th:action="@{/products}" method="get" class="search">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm theo tên...">
+        <button class="btn primary" type="submit">Tìm</button>
+        <a th:href="@{/products}" class="btn secondary">Xóa lọc</a>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ảnh</th>
+            <th>Tên</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Người tạo</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${products}">
+            <td th:text="${p.id}"></td>
+            <td>
+                <img th:src="${p.images != null ? p.images : '/images/no-image.png'}"
+                     width="60" height="60" class="thumb">
+            </td>
+            <td th:text="${p.name}"></td>
+            <td th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"></td>
+            <td th:text="${p.quantity}"></td>
+            <td th:text="${p.userName}"></td>
+            <td>
+                <a th:href="@{/products/edit/{id}(id=${p.id})}" class="btn small secondary">Sửa</a>
+                <form th:action="@{/products/delete/{id}(id=${p.id})}" method="post"
+                      style="display:inline"
+                      onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
+                    <button type="submit" class="btn small danger">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${products.isEmpty()}">
+            <td colspan="7" class="text-center">Không có dữ liệu</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/products(page=${currentPage - 1}, keyword=${keyword})}">« Trước</a>
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{/products(page=${i}, keyword=${keyword})}"
+               th:classappend="${i == currentPage} ? 'active'"
+               th:text="${i + 1}">1</a>
+        </span>
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/products(page=${currentPage + 1}, keyword=${keyword})}">Sau »</a>
+    </div>
+</main>
+
+</body>
+</html>

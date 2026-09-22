@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Trang chủ</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <h1>Trang chủ UTEShop</h1>
+
+    <p sec:authorize="isAuthenticated()">
+        Xin chào
+        <strong th:text="${#authentication.principal.fullName}">User</strong>!
+    </p>
+    <p sec:authorize="isAnonymous()">
+        Vui lòng <a th:href="@{/login}">đăng nhập</a> để tiếp tục.
+    </p>
+
+    <!-- Thẻ thống kê nhanh (chỉ ADMIN) -->
+    <div class="cards" sec:authorize="hasRole('ADMIN')">
+        <div class="card">
+            <b>Tổng User</b>
+            <strong th:text="${totalUsers ?: '—'}">0</strong>
+        </div>
+        <div class="card">
+            <b>Tổng Sản phẩm</b>
+            <strong th:text="${totalProducts ?: '—'}">0</strong>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

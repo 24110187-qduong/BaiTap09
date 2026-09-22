@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Quản lý User</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <div class="page-title">
+        <h1>Quản lý User</h1>
+        <a th:href="@{/users/create}" class="btn primary">+ Thêm User</a>
+    </div>
+
+    <!-- Thông báo -->
+    <div class="alert success" th:if="${message}" th:text="${message}"></div>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+
+    <!-- Form tìm kiếm -->
+    <form th:action="@{/users}" method="get" class="search">
+        <input type="text" name="keyword" th:value="${keyword}"
+               placeholder="Tìm theo username hoặc họ tên...">
+        <button class="btn primary" type="submit">Tìm</button>
+        <a th:href="@{/users}" class="btn secondary">Xóa lọc</a>
+    </form>
+
+    <!-- Bảng dữ liệu -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>
+                <a th:href="@{/users(sortBy='username', sortDir=${reverseSortDir}, keyword=${keyword})}">
+                    Username
+                </a>
+            </th>
+            <th>Email</th>
+            <th>Họ tên</th>
+            <th>Role</th>
+            <th>Trạng thái</th>
+            <th>Số SP</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.id}"></td>
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.email}"></td>
+            <td th:text="${u.fullName}"></td>
+            <td th:text="${u.roleName}"></td>
+            <td>
+                <span th:if="${u.enabled}" class="badge success">Hoạt động</span>
+                <span th:unless="${u.enabled}" class="badge danger">Khóa</span>
+            </td>
+            <td th:text="${u.productCount}"></td>
+            <td>
+                <a th:href="@{/users/edit/{id}(id=${u.id})}" class="btn small secondary">Sửa</a>
+                <form th:action="@{/users/delete/{id}(id=${u.id})}" method="post"
+                      style="display:inline"
+                      onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
+                    <button type="submit" class="btn small danger">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${users.isEmpty()}">
+            <td colspan="8" class="text-center">Không có dữ liệu</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/users(page=${currentPage - 1}, keyword=${keyword}, sortBy=${sortBy}, sortDir=${sortDir})}">
+            « Trước
+        </a>
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{/users(page=${i}, keyword=${keyword}, sortBy=${sortBy}, sortDir=${sortDir})}"
+               th:classappend="${i == currentPage} ? 'active'"
+               th:text="${i + 1}">1</a>
+        </span>
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/users(page=${currentPage + 1}, keyword=${keyword}, sortBy=${sortBy}, sortDir=${sortDir})}">
+            Sau »
+        </a>
+    </div>
+</main>
+
+</body>
+</html>

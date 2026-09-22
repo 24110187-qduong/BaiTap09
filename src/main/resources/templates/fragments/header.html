@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<header th:fragment="header" class="topbar">
+    <div class="brand">
+        <a th:href="@{/}">UTEShop</a>
+    </div>
+
+    <nav class="main-nav">
+        <a th:href="@{/}">Trang chủ</a>
+        <a th:href="@{/products}" sec:authorize="isAuthenticated()">Sản phẩm</a>
+        <a th:href="@{/users}" sec:authorize="hasRole('ADMIN')">Quản lý User</a>
+        <a th:href="@{/users/stats}" sec:authorize="hasRole('ADMIN')">Thống kê</a>
+    </nav>
+
+    <!-- ĐÃ ĐĂNG NHẬP -->
+    <div class="account" sec:authorize="isAuthenticated()">
+        <!-- Avatar -->
+        <img th:src="${#authentication.principal.images != null
+                        and !#strings.isEmpty(#authentication.principal.images)
+                        ? #authentication.principal.images
+                        : '/images/avatar-default.png'}"
+             alt="Avatar"
+             class="avatar"
+             width="40" height="40">
+
+        <!-- Full name -->
+        <span class="fullname" th:text="${#authentication.principal.fullName}">Nguyễn Văn A</span>
+
+        <!-- Username -->
+        <span class="username" th:text="'(' + ${#authentication.principal.username} + ')'">(user01)</span>
+
+        <!-- Role -->
+        <span class="role" th:text="${#authentication.principal.role}">ROLE_USER</span>
+
+        <!-- Logout -->
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="link-button">Đăng xuất</button>
+        </form>
+    </div>
+
+    <!-- CHƯA ĐĂNG NHẬP -->
+    <div class="account" sec:authorize="isAnonymous()">
+        <a th:href="@{/login}" class="btn primary small">Đăng nhập</a>
+        <a th:href="@{/register}" class="btn secondary small">Đăng ký</a>
+    </div>
+</header>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title th:text="${productDTO.id != null ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}">Product</title>
+</head>
+<body>
+
+<main layout:fragment="content">
+    <h1 th:text="${productDTO.id != null ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}"></h1>
+
+    <form th:action="${productDTO.id != null} ? @{/products/edit/{id}(id=${productDTO.id})} : @{/products/create}"
+          th:object="${productDTO}" method="post" enctype="multipart/form-data" class="form">
+
+        <label>Tên sản phẩm</label>
+        <input type="text" th:field="*{name}" required>
+        <span class="field-error" th:if="${#fields.hasErrors('name')}"
+              th:errors="*{name}"></span>
+
+        <label>Mô tả</label>
+        <textarea th:field="*{description}" rows="3"></textarea>
+
+        <label>Giá</label>
+        <input type="number" th:field="*{price}" step="0.01" min="0" required>
+
+        <label>Số lượng</label>
+        <input type="number" th:field="*{quantity}" min="0" required>
+
+        <label>Ảnh sản phẩm</label>
+        <input type="file" name="file" accept="image/*">
+        <div th:if="${productDTO.images != null}">
+            <img th:src="${productDTO.images}" width="120" class="thumb">
+        </div>
+
+        <button class="btn primary" type="submit">Lưu</button>
+        <a th:href="@{/products}" class="btn secondary">Hủy</a>
+    </form>
+</main>
+
+</body>
+</html>
